@@ -15,7 +15,7 @@ Run the Game:
 
 Clone this repository to your local machine.
 Open your terminal and navigate to the game directory.
-Run the game using the command: python main.py (or the appropriate command for your programming language).
+Run the game using the commgitand: python main.py (or the appropriate command for your programming language).
 Gameplay:
 
 You will be presented with a set of letters in the terminal.
