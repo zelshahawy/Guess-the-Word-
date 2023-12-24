@@ -1,6 +1,6 @@
-# The 6.00 Word Game - My Implementation
-
 import random
+import threading
+import time
 VOWELS = 'aeiou'
 CONSONANTS = 'bcdfghjklmnpqrstvwxyz'
 HAND_SIZE = 7
@@ -113,10 +113,6 @@ def dealHand(n):
 
     return hand
 
-
-#
-# Problem #2: Update a hand by removing letters
-#
 def updateHand(hand, word):
     """
     Assumes that 'hand' has all the letters in word.
@@ -157,7 +153,6 @@ def isValidWord(word, hand, wordList):
     for letter in word:
         if new[letter] <= 0:
             return False
-            break
         new[letter] -= 1
     return True
 
@@ -175,53 +170,44 @@ def calculateHandlen(hand):
     return total
 
 
-def playHand(hand, wordList, n):
-    """
-    Allows the user to play the given hand, as follows:
 
-    * The hand is displayed.
-    * The user may input a word or a single period (the string ".") 
-      to indicate they're done playing
-    * Invalid words are rejected, and a message is displayed asking
-      the user to choose another word until they enter a valid word or "."
-    * When a valid word is entered, it uses up letters from the hand.
-    * After every valid word: the score for that word is displayed,
-      the remaining letters in the hand are displayed, and the user
-      is asked to input another word.
-    * The sum of the word scores is displayed when the hand finishes.
-    * The hand finishes when there are no more unused letters or the user
-      inputs a "."
 
-      hand: dictionary (string -> int)
-      wordList: list of lowercase strings
-      n: integer (HAND_SIZE; i.e., hand size required for additional points)
-      
-    """
+def playHand(hand, wordList, n, timer_requested=None):
     score = 0
+    time_expired = False
 
-    while calculateHandlen(hand) > 0:
+    def timer():
+        nonlocal time_expired
+        time.sleep(timer_requested)
+        time_expired = True
+
+    if timer_requested is not None:
+        t = threading.Thread(target=timer)
+        t.start()
+
+    while calculateHandlen(hand) > 0 and not time_expired:
         print('current hand is:', end=' ')
         displayHand(hand)
-        # Display the hand
         user = input('Enter word, or a "." to indicate that you are finished: ')
-        # Ask user for input
         if user == '.':
-            print('The round has ended as you inputted "." ')
-            print('your total score for this round '
-                  'is', score)
+            print('The round has ended as you inputted "." \n')
+            print('your total score for this round is', score)
             break
-        if isValidWord(user, hand, wordList) == False:
-            print('invalid word, bro\n')
+        if not isValidWord(user, hand, wordList):
+            print('invalid word\n')
         else:
             print('Points gained is', getWordScore(user, n), end='. ')
             score += getWordScore(user, n)
             print('current score is', score, end='. ')
             print('\n')
             hand = updateHand(hand, user)
-    if calculateHandlen(hand) == 0:
+
+    if time_expired:
+        print("Time's up!")
+        print('your score is ', score)
+    elif calculateHandlen(hand) == 0:
         print('You have used all of the word, Congrats! Your total score is:', score)
     return score
-
 
 def playGame(wordList):
     """
@@ -246,15 +232,17 @@ def playGame(wordList):
         user = input("Enter n to deal a new hand, r to replay the last hand, or e to end game: ")
         # If the user inputs 'n', deal a new hand and play it
         if user == 'n':
+            timer_requested = input("Do you want to play with a timer? click enter if not, otherwise type your preferred time for each guess: ")
+            timer_requested = float(timer_requested) if timer_requested else None
             hand = dealHand(HAND_SIZE)
-            temp = playHand(hand, wordList, HAND_SIZE)
+            temp = playHand(hand, wordList, HAND_SIZE, timer_requested)
             played = True
             final_score += temp
             n += 1
         # If the user inputs 'r', check if there is a previous hand and play it
         elif user == 'r':
             if played:
-                temp = playHand(hand, wordList, HAND_SIZE)
+                temp = playHand(hand, wordList, HAND_SIZE, timer_requested)
                 final_score += temp
                 n += 1
             else:
