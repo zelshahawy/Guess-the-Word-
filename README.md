@@ -15,11 +15,11 @@ Run the Game:
 
 Clone this repository to your local machine.
 Open your terminal and navigate to the game directory.
-Run the game using the commgitand: python main.py (or the appropriate command for your programming language).
+Run the game using the command: python guess.py (or the appropriate command for your programming language).
 Gameplay:
 
 You will be presented with a set of letters in the terminal.
-Use the provided letters to create valid words.
+Use the provided letters to create valid words with the option of having a timer for every round.
 Input your word and press Enter to submit.
 
 Keep playing and building words to achieve the highest score possible.
