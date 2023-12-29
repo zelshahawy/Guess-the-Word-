@@ -1,6 +1,8 @@
 import random
 import threading
 import time
+from colorama import Fore, Back, Style
+
 VOWELS = 'aeiou'
 CONSONANTS = 'bcdfghjklmnpqrstvwxyz'
 HAND_SIZE = 7
@@ -25,7 +27,7 @@ def loadwords():
     inFile = open(WORDLIST_FILENAME, 'r')
     # wordList: list of strings
     wordList = tuple(line.strip().lower() for line in inFile)
-    print("  ", len(wordList), "words loaded.")
+    print(" ", len(wordList), "words loaded.")
     return set(wordList)
 
 
@@ -113,6 +115,7 @@ def dealHand(n):
 
     return hand
 
+
 def updateHand(hand, word):
     """
     Assumes that 'hand' has all the letters in word.
@@ -170,8 +173,6 @@ def calculateHandlen(hand):
     return total
 
 
-
-
 def playHand(hand, wordList, n, timer_requested=None):
     score = 0
     time_expired = False
@@ -191,6 +192,7 @@ def playHand(hand, wordList, n, timer_requested=None):
         user = input('Enter word, or a "." to indicate that you are finished: ')
         if user == '.':
             print('The round has ended as you inputted "." \n')
+            time_expired = False
             print('your total score for this round is', score)
             break
         if not isValidWord(user, hand, wordList):
@@ -258,5 +260,11 @@ def playGame(wordList):
 
 
 if __name__ == '__main__':
+    print(Fore.CYAN + Style.BRIGHT + """
+╦ ╦┌─┐┬  ┌─┐┌─┐┌┬┐┌─┐  ┌┬┐┌─┐  ╔═╗┬ ┬┌─┐┌─┐┌─┐  ┌┬┐┬ ┬┌─┐  ┬ ┬┌─┐┬─┐┌┬┐
+║║║├┤ │  │  │ ││││├┤    │ │ │  ║ ╦│ │├┤ └─┐└─┐   │ ├─┤├┤   ││││ │├┬┘ ││
+╚╩╝└─┘┴─┘└─┘└─┘┴ ┴└─┘   ┴ └─┘  ╚═╝└─┘└─┘└─┘└─┘   ┴ ┴ ┴└─┘  └┴┘└─┘┴└──┴┘
+
+""" + Style.RESET_ALL)
     wordList = loadwords()
     playGame(wordList)
