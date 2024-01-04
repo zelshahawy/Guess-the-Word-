@@ -2,6 +2,7 @@ import random
 import threading
 import time
 from colorama import Fore, Back, Style
+from typing import List, Dict, Set, Optional, Union
 
 VOWELS = 'aeiou'
 CONSONANTS = 'bcdfghjklmnpqrstvwxyz'
@@ -15,39 +16,39 @@ SCRABBLE_LETTER_VALUES = {
 WORDLIST_FILENAME = "words.txt"
 
 
-def loadwords():
+def loadwords() ->Set[str]:
     """
-    Returns a list of valid words. Words are strings of lowercase letters.
+    Returns a List of valid words. Words are strings of lowercase letters.
     
-    Depending on the size of the word list, this function may
+    Depending on the size of the word List, this function may
     take a while to finish.
     """
-    print("Loading word list from file...")
+    print("Loading word List from file...")
     # inFile: file
     inFile = open(WORDLIST_FILENAME, 'r')
-    # wordList: list of strings
+    # wordList: List of strings
     wordList = tuple(line.strip().lower() for line in inFile)
     print(" ", len(wordList), "words loaded.")
-    return set(wordList)
+    return Set(wordList)
 
 
-def getFrequencyDict(sequence):
+def getFrequencyDict(sequence: List[str] | str) -> Dict[str, int]:
     """
-    Returns a dictionary where the keys are elements of the sequence
+    Returns a Dictionary where the keys are elements of the sequence
     and the values are integer counts, for the number of times that
     an element is repeated in the sequence.
 
-    sequence: string or list
-    return: dictionary
+    sequence: string or List
+    return: Dictionary
     """
-    # freqs: dictionary (element_type -> int)
-    freq = {}
+    # freqs: Dictionary (element_type -> int)
+    freq: Dict[str, int] = {}
     for x in sequence:
         freq[x] = freq.get(x, 0) + 1
     return freq
 
 
-def getWordScore(word, n):
+def getWordScore(word: str, n : int) -> int:
     """
     Returns the score for a word. Assumes the word is a valid word.
 
@@ -72,7 +73,7 @@ def getWordScore(word, n):
     return total
 
 
-def displayHand(hand):
+def displayHand(hand: Dict[str, int]) -> None:
     """
     Displays the letters currently in the hand.
 
@@ -82,7 +83,7 @@ def displayHand(hand):
        a x x l l l e
     The order of the letters is unimportant.
 
-    hand: dictionary (string -> int)
+    hand: Dictionary (string -> int)
     """
     for letter in hand.keys():
         for j in range(hand[letter]):
@@ -90,19 +91,19 @@ def displayHand(hand):
     print()  # print an empty line
 
 
-def dealHand(n):
+def dealHand(n: int) -> Dict[str, int]:
     """
     Returns a random hand containing n lowercase letters.
     At least n/3 the letters in the hand should be VOWELS.
 
-    Hands are represented as dictionaries. The keys are
+    Hands are represented as Dictionaries. The keys are
     letters and the values are the number of times the
     particular letter is repeated in that hand.
 
     n: int >= 0
-    returns: dictionary (string -> int)
+    returns: Dictionary (string -> int)
     """
-    hand = {}
+    hand: Dict[str, int] = {}
     numVowels = n // 3
 
     for i in range(numVowels):
@@ -116,7 +117,7 @@ def dealHand(n):
     return hand
 
 
-def updateHand(hand, word):
+def updateHand(hand: Dict[str, int], word: str) -> Dict[str, int]:
     """
     Assumes that 'hand' has all the letters in word.
     In other words, this assumes that however many times
@@ -129,8 +130,8 @@ def updateHand(hand, word):
     Has no side effects: does not modify hand.
 
     word: string
-    hand: dictionary (string -> int)    
-    returns: dictionary (string -> int)
+    hand: Dictionary (string -> int)    
+    returns: Dictionary (string -> int)
     """
     new = hand.copy()
     for letter in word:
@@ -139,7 +140,7 @@ def updateHand(hand, word):
     return new
 
 
-def isValidWord(word, hand, wordList):
+def isValidWord(word: str, hand: Dict[str, int] , wordList: Set[str]) -> bool:
     """
     Returns True if word is in the wordList and is entirely
     composed of letters in the hand. Otherwise, returns False.
@@ -147,8 +148,8 @@ def isValidWord(word, hand, wordList):
     Does not mutate hand or wordList.
    
     word: string
-    hand: dictionary (string -> int)
-    wordList: list of lowercase strings
+    hand: Dictionary (string -> int)
+    wordList: List of lowercase strings
     """
     new = hand.copy()
     if word not in wordList:
@@ -160,11 +161,11 @@ def isValidWord(word, hand, wordList):
     return True
 
 
-def calculateHandlen(hand):
+def calculateHandlen(hand: Dict[str, int]) -> int:
     """ 
     Returns the length (number of letters) in the current hand.
     
-    hand: dictionary (string-> int)
+    hand: Dictionary (string-> int)
     returns: integer
     """
     total = 0
@@ -173,7 +174,7 @@ def calculateHandlen(hand):
     return total
 
 
-def playHand(hand, wordList, n, timer_requested=None):
+def playHand(hand: Dict[str, int], wordList: Set[str], n: int, timer_requested: Optional[Union[str, float]] = None) -> int:
     score = 0
     time_expired = False
 
@@ -211,7 +212,7 @@ def playHand(hand, wordList, n, timer_requested=None):
         print('You have used all of the word, Congrats! Your total score is:', score)
     return score
 
-def playGame(wordList):
+def playGame(wordList: Set[str]) -> None:
     """
     Allow the user to play an arbitrary number of hands.
 
@@ -234,8 +235,8 @@ def playGame(wordList):
         user = input("Enter n to deal a new hand, r to replay the last hand, or e to end game: ")
         # If the user inputs 'n', deal a new hand and play it
         if user == 'n':
-            timer_requested = input("Do you want to play with a timer? click enter if not, otherwise type your preferred time for each guess: ")
-            timer_requested = float(timer_requested) if timer_requested else None
+            timer_requested: Optional[float]
+            timer_requested = float(input("Do you want to play with a timer? click enter if not, otherwise type your preferred time for each guess: ")) if timer_requested else None
             hand = dealHand(HAND_SIZE)
             temp = playHand(hand, wordList, HAND_SIZE, timer_requested)
             played = True
