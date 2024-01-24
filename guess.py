@@ -16,7 +16,7 @@ SCRABBLE_LETTER_VALUES = {
 WORDLIST_FILENAME = "words.txt"
 
 
-def loadwords() ->Set[str]:
+def loadwords() ->set[str]:
     """
     Returns a List of valid words. Words are strings of lowercase letters.
     
@@ -29,10 +29,10 @@ def loadwords() ->Set[str]:
     # wordList: List of strings
     wordList = tuple(line.strip().lower() for line in inFile)
     print(" ", len(wordList), "words loaded.")
-    return Set(wordList)
+    return set(wordList)
 
 
-def getFrequencyDict(sequence: List[str] | str) -> Dict[str, int]:
+def getFrequencyDict(sequence: list[str] | str) -> dict[str, int]:
     """
     Returns a Dictionary where the keys are elements of the sequence
     and the values are integer counts, for the number of times that
@@ -73,7 +73,7 @@ def getWordScore(word: str, n : int) -> int:
     return total
 
 
-def displayHand(hand: Dict[str, int]) -> None:
+def displayHand(hand: dict[str, int]) -> None:
     """
     Displays the letters currently in the hand.
 
@@ -86,12 +86,12 @@ def displayHand(hand: Dict[str, int]) -> None:
     hand: Dictionary (string -> int)
     """
     for letter in hand.keys():
-        for j in range(hand[letter]):
+        for _ in range(hand[letter]):
             print(letter, end=" ")  # print all on the same line
     print()  # print an empty line
 
 
-def dealHand(n: int) -> Dict[str, int]:
+def dealHand(n: int) -> dict[str, int]:
     """
     Returns a random hand containing n lowercase letters.
     At least n/3 the letters in the hand should be VOWELS.
@@ -103,21 +103,21 @@ def dealHand(n: int) -> Dict[str, int]:
     n: int >= 0
     returns: Dictionary (string -> int)
     """
-    hand: Dict[str, int] = {}
+    hand: dict[str, int] = {}
     numVowels = n // 3
 
-    for i in range(numVowels):
+    for _ in range(numVowels):
         x = VOWELS[random.randrange(0, len(VOWELS))]
         hand[x] = hand.get(x, 0) + 1
 
-    for i in range(numVowels, n):
+    for _ in range(numVowels, n):
         x = CONSONANTS[random.randrange(0, len(CONSONANTS))]
         hand[x] = hand.get(x, 0) + 1
 
     return hand
 
 
-def updateHand(hand: Dict[str, int], word: str) -> Dict[str, int]:
+def updateHand(hand: dict[str, int], word: str) -> dict[str, int]:
     """
     Assumes that 'hand' has all the letters in word.
     In other words, this assumes that however many times
@@ -140,7 +140,7 @@ def updateHand(hand: Dict[str, int], word: str) -> Dict[str, int]:
     return new
 
 
-def isValidWord(word: str, hand: Dict[str, int] , wordList: Set[str]) -> bool:
+def isValidWord(word: str, hand: dict[str, int] , wordList: set[str]) -> bool:
     """
     Returns True if word is in the wordList and is entirely
     composed of letters in the hand. Otherwise, returns False.
@@ -155,13 +155,15 @@ def isValidWord(word: str, hand: Dict[str, int] , wordList: Set[str]) -> bool:
     if word not in wordList:
         return False
     for letter in word:
+        if letter not in hand:
+            return False
         if new[letter] <= 0:
             return False
         new[letter] -= 1
     return True
 
 
-def calculateHandlen(hand: Dict[str, int]) -> int:
+def calculateHandlen(hand: dict[str, int]) -> int:
     """ 
     Returns the length (number of letters) in the current hand.
     
@@ -174,7 +176,7 @@ def calculateHandlen(hand: Dict[str, int]) -> int:
     return total
 
 
-def playHand(hand: Dict[str, int], wordList: Set[str], n: int, timer_requested: Optional[Union[str, float]] = None) -> int:
+def playHand(hand: dict[str, int], wordList: set[str], n: int, timer_requested: Optional[Union[str, float]] = None) -> int:
     score = 0
     time_expired = False
 
@@ -197,7 +199,7 @@ def playHand(hand: Dict[str, int], wordList: Set[str], n: int, timer_requested: 
             print('your total score for this round is', score)
             break
         if not isValidWord(user, hand, wordList):
-            print('invalid word\n')
+            print('invalid word or letter\n')
         else:
             print('Points gained is', getWordScore(user, n), end='. ')
             score += getWordScore(user, n)
@@ -212,7 +214,7 @@ def playHand(hand: Dict[str, int], wordList: Set[str], n: int, timer_requested: 
         print('You have used all of the word, Congrats! Your total score is:', score)
     return score
 
-def playGame(wordList: Set[str]) -> None:
+def playGame(wordList: set[str]) -> None:
     """
     Allow the user to play an arbitrary number of hands.
 
@@ -236,7 +238,12 @@ def playGame(wordList: Set[str]) -> None:
         # If the user inputs 'n', deal a new hand and play it
         if user == 'n':
             timer_requested: Optional[float]
-            timer_requested = float(input("Do you want to play with a timer? click enter if not, otherwise type your preferred time for each guess: ")) if timer_requested else None
+            timer_requested = ""
+            timer_requested = (input("Do you want to play with a timer? click enter if not, otherwise type your preferred time for each guess: "))
+            if isinstance(timer_requested, (float, int)):
+                timer_requested = float(timer_requested)
+            else:
+                timer_requested = None
             hand = dealHand(HAND_SIZE)
             temp = playHand(hand, wordList, HAND_SIZE, timer_requested)
             played = True

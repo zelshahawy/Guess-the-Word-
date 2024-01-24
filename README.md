@@ -1,32 +1,27 @@
-# Guess-the-Word-
-Terminal Word Game
-Overview
-Welcome to the Terminal Word Game! This is a simple yet engaging game where players are presented with a set of letters in the terminal and are tasked with creating words using those letters. The game includes a score tracker to keep track of your word-building prowess.
+# WordVenture - A Scrabble Game
 
-Features
-Letter Pool: A set of random letters is generated and displayed in the terminal.
+## Overview
 
-Word Creation: Players can input words using the provided letters.
+WordVenture is a console-based Scrabble game implemented in Python. Test your word-building skills and strategic thinking in this classic word game.
 
-Scoring: Each valid word earns the player points, and the score is tracked throughout the game.
+## Features
 
-How to Play
-Run the Game:
+- **Random Hand Generation:** Each game starts with a random set of letters, providing a unique challenge.
+- **Scrabble Scoring:** Score points based on the letters used and word length, just like in Scrabble.
+- **Timer Option:** Play with or without a timer for an added challenge.
+- **Interactive User Interface:** User-friendly console interface with color-coded text for better readability.
 
-Clone this repository to your local machine.
-Open your terminal and navigate to the game directory.
-Run the game using the command: python guess.py (or the appropriate command for your programming language).
-Gameplay:
+## Getting Started
 
-You will be presented with a set of letters in the terminal.
-Use the provided letters to create valid words with the option of having a timer for every round.
-Input your word and press Enter to submit.
+### Prerequisites
 
-Keep playing and building words to achieve the highest score possible.
-Challenge yourself to beat your own high score.
+- Python 3.x
+- colorama library (install using `pip install colorama`)
 
+### Installation
 
-Acknowledgments
-Thanks to EDX MIT 6.00 for heping me build the game.
+1. Clone the repository:
 
-Enjoy the game and happy word building!
+   ```bash
+   git clone https://github.com/yourusername/wordventure-scrabble.git
+   cd wordventure-scrabble
